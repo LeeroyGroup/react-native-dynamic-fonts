@@ -4,12 +4,12 @@
  * This source code is licensed under the MIT license found in the LICENSE file in the root
  * directory of this source tree.
  */
- 
+
 const { NativeModules } = require('react-native');
 const { DynamicFonts } = NativeModules;
 const loadedFonts = {};
 
-function loadFont(name, data, type, forceLoad) {
+function loadFont(name, data, type, style, forceLoad) {
   /* Check if this font was already loaded */
   if (!forceLoad && loadedFonts[name])
     return Promise.resolve(loadedFonts[name]);
@@ -20,12 +20,16 @@ function loadFont(name, data, type, forceLoad) {
   if (!data)
     throw new Error('Data is a required argument');
 
+  if (!style)
+    throw new Error('Style is a required argument');
+
   /* Load font via native binary code */
   return new Promise(function(resolve, reject) {
     DynamicFonts.loadFont({
       name: name,
       data: data,
-      type: type
+      type: type,
+      style: style,
     }, function(err, givenName) {
       if (err) {
         reject(err);
@@ -47,7 +51,7 @@ function loadFonts(_fontList, forceLoad) {
   if (!(fontList instanceof Array))
     fontList = [fontList];
 
-  return Promise.all(fontList.filter((font) => font).map((font) => loadFont(font.name, font.data, font.type, forceLoad)));
+  return Promise.all(fontList.filter((font) => font).map((font) => loadFont(font.name, font.data, font.type, font.style, forceLoad)));
 }
 
 module.exports = {

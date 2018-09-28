@@ -32,7 +32,7 @@ import java.util.Set;
 class DynamicFontsModule extends ReactContextBaseJavaModule {
   int tempNameCounter = 0;
   WritableMap response;
-  
+
   public DynamicFontsModule(ReactApplicationContext reactContext) {
     super(reactContext);
   }
@@ -103,8 +103,13 @@ class DynamicFontsModule extends ReactContextBaseJavaModule {
       //Load the font from the temporary file we just created
       Typeface typeface = Typeface.createFromFile(cacheFile);
 
+      Map<String, Integer> stylesMap = new HashMap<String, Integer>();
+      stylesMap.put("normal", Typeface.NORMAL);
+      stylesMap.put("bold", Typeface.BOLD);
+      stylesMap.put("italic", Typeface.ITALIC);
+
       //Cache the font for react
-      ReactFontManager.getInstance().setTypeface(name, typeface.getStyle(), typeface);
+      ReactFontManager.getInstance().setTypeface(name, stylesMap.get(options.getString("style")), typeface);
 
       cacheFile.delete();
     } catch(Exception e) {
